@@ -1,0 +1,32 @@
+# Declare robotpkg apt repositories
+
+sudo tee /etc/apt/sources.list.d/robotpkg.list <<EOF
+deb [arch=amd64] http://robotpkg.openrobots.org/wip/packages/debian/pub xenial robotpkg
+deb [arch=amd64] http://robotpkg.openrobots.org/packages/debian/pub xenial robotpkg
+EOF
+curl http://robotpkg.openrobots.org/packages/debian/robotpkg.key | sudo apt-key add -
+   
+# Update and install packages
+
+sudo apt-get update
+sudo apt-get install robotpkg-hpp-manipulation-corba robotpkg-hpp-environments robotpkg-talos-dev robotpkg-osg-dae robotpkg-py27-qt4-hpp-gepetto-viewer
+
+# Run HPP
+
+Preliminary: make sure omniorb name server is running
+in a terminal
+  ps -ef | grep omniNames
+if you do not something like
+  root      1272     1  0 08:56 ?        00:00:00 /usr/bin/omniNames -errlog /var/log/omniorb-nameserver.log
+type
+  omniNames -start 2809 -logdir /tmp
+  
+Start HPP
+in a terminal:
+  hpp-manipulation-server
+in a terminal
+  python -i pyrene.py
+in a terminal
+  gepetto-gui
+
+Trajectory is saved in file "/tmp/traj.yaml".
