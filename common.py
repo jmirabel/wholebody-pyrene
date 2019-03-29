@@ -1,5 +1,10 @@
 import numpy as np
 from numpy.linalg import norm
+from hpp.corbaserver.manipulation.robot import Robot
+from hpp.corbaserver.manipulation import newProblem, ProblemSolver
+from hpp.gepetto.manipulation import ViewerFactory
+from hpp import Transform
+import CORBA, sys, numpy as np
 
 # Generate a random valid configuration
 def generateRandomConfig (robot, cg):
@@ -65,4 +70,59 @@ def checkVelocity (ps, pid, dt):
             t = T
             finished += 1
     return M
+
+class Box (object):
+  def __init__ (self, name, vf) :
+    self.name = name
+    self.handles = [ name + "/" + h for h in self.__class__.handles ]
+    self.contacts = [ name + "/" + h for h in self.__class__.contacts ]
+    vf.loadObjectModel (self.__class__, name)
+
+  rootJointType = 'freeflyer'
+  packageName = 'gerard_bauzil'
+  urdfName = 'plank_of_wood1'
+  urdfSuffix = ""
+  srdfSuffix = ""
+  handles = ["handle1", "handle2", "handle3", "handle4"]
+  contacts = [ "front_surface", "rear_surface", ]
+
+class Table (object):
+  def __init__ (self, name, vf) :
+    self.name = name
+    self.handles = [ name + "/" + h for h in self.__class__.handles ]
+    self.contacts = [ name + "/" + h for h in self.__class__.contacts ]
+    vf.loadObjectModel (self.__class__, name)
+
+  rootJointType = 'anchor'
+  packageName = 'gerard_bauzil'
+  urdfName = 'table_140_70_73'
+  urdfSuffix = ""
+  srdfSuffix = ""
+  pose = "pose"
+  handles = []
+  contacts = [ "top", ]
+
+newProblem()
+
+Robot.packageName = 'talos_data'
+Robot.urdfName = 'talos'
+Robot.urdfSuffix = '_full_v2'
+Robot.srdfSuffix= ''
+
+robot = Robot ('dev', 'talos', rootJointType = "freeflyer")
+robot. leftAnkle = "talos/leg_left_6_joint"
+robot.rightAnkle = "talos/leg_right_6_joint"
+
+robot.setJointBounds ("talos/root_joint", [-1, 1, -1, 1, 0.5, 1.5])
+
+ps = ProblemSolver (robot)
+ps.setRandomSeed(123)
+ps.selectPathProjector("Progressive", 0.2)
+ps.setErrorThreshold (1e-3)
+ps.setMaxIterProjection (40)
+
+ps.addPathOptimizer("RandomShortcut")
+ps.addPathOptimizer("SimpleTimeParameterization")
+
+vf = ViewerFactory (ps)
 
