@@ -25,7 +25,7 @@ ps.createPositionConstraint ("gaze", "talos/rgbd_optical_joint",
 
 # Constraint of constant yaw of the waist
 ps.createOrientationConstraint ("waist orientation", "", "talos/root_joint",
-                                (0,0,0,1), [True, True, True])
+                                (0,0,0,1), [False, False, True])
 ps.setConstantRightHandSide ("waist orientation", False)
 # Create static stability constraints
 ps.addPartialCom ("talos", ["talos/root_joint"])
@@ -94,8 +94,8 @@ for e in cg.edges.keys ():
 
 cg.initialize ()
 
-n_init = 'table/gripper1 grasps box/handle2'
-n_goal = 'table/gripper1 grasps box/handle1'
+n_init = 'table/gripper1 grasps box/handle1'
+n_goal = 'table/gripper1 grasps box/handle2'
 q_goal = q_init [::]
 q_goal [-4:] = [0.5, -0.5, 0.5, 0.5]
 # Project initial configuration on initial node
@@ -120,6 +120,8 @@ ps.addGoalConfig(q_goal)
 ps.setParameter ('SimpleTimeParameterization/order', 2)
 ps.setParameter ('SimpleTimeParameterization/maxAcceleration', .5)
 ps.setParameter ('SimpleTimeParameterization/safety', 0.5)
+ps.setParameter ("ManipulationPlanner/extendStep", 0.7)
+
 #ps.solve()
 pid = ps.numberPaths () - 1
 if pid >= 0: writeTrajInYaml (ps, pid, '/tmp/traj.yaml', .1)

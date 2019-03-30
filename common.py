@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.linalg import norm
-from hpp.corbaserver.manipulation.robot import Robot
+from hpp.corbaserver.manipulation.robot import HumanoidRobot as Robot
 from hpp.corbaserver.manipulation import newProblem, ProblemSolver
 from hpp.gepetto.manipulation import ViewerFactory
 from hpp import Transform
@@ -121,7 +121,7 @@ ps.selectPathProjector("Progressive", 0.2)
 ps.setErrorThreshold (1e-3)
 ps.setMaxIterProjection (40)
 
-ps.addPathOptimizer("RandomShortcut")
+ps.addPathOptimizer("Graph-RandomShortcut")
 ps.addPathOptimizer("SimpleTimeParameterization")
 
 vf = ViewerFactory (ps)
