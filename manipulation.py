@@ -29,7 +29,7 @@ ps.createOrientationConstraint ("waist orientation", "", "talos/root_joint",
 ps.setConstantRightHandSide ("waist orientation", False)
 # Create static stability constraints
 ps.addPartialCom ("talos", ["talos/root_joint"])
-ps.createStaticStabilityConstraints ("balance", q_init, "talos", ProblemSolver.FIXED_ON_THE_GROUND)
+robot.createStaticStabilityConstraint ("balance/", "talos", robot.leftAnkle, robot.rightAnkle, q_init)
 footPlacement = [ "balance/pose-left-foot", "balance/pose-right-foot" ]
 footPlacementComplement = [ ]
 quasiStaticConstraints = footPlacement + ['balance/relative-com']
